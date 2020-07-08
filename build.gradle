@@ -42,6 +42,8 @@ subprojects {
     java {
         sourceCompatibility = JavaVersion.toVersion('1.8')
         targetCompatibility = JavaVersion.toVersion('1.8')
+        withSourcesJar()
+        withJavadocJar()
     }
 
     tasks.withType(JavaCompile) {
@@ -75,8 +77,11 @@ subprojects {
     publishing {
         publications {
             Publication(MavenPublication) {
-                artifactId "${rootProject.name}-${project.name}"
                 from components.java
+                artifact sourcesJar
+                artifact javadocJar
+                artifactId "${rootProject.name}-${project.name}"
+                version libraryVersion
             }
         }
     }
