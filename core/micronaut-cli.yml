@@ -1,0 +1,6 @@
+applicationType: messaging
+defaultPackage: com.uberall
+testFramework: spock
+sourceLanguage: java
+buildTool: gradle
+features: [app-name, gradle, java, java-application, logback, readme, shade, spock, yaml]
