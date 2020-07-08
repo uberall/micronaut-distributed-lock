@@ -81,7 +81,7 @@ subprojects {
                 artifact sourcesJar
                 artifact javadocJar
                 artifactId "${rootProject.name}-${project.name}"
-                version libraryVersion
+                version libVersion
             }
         }
     }
