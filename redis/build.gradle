@@ -3,3 +3,5 @@ dependencies {
     testCompile "com.github.kstyrc:embedded-redis:0.6"
     implementation project(":core")
 }
+
+bintrayUpload.dependsOn('clean', 'test')

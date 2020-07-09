@@ -12,3 +12,5 @@ dependencies {
 
     implementation project(":core")
 }
+
+bintrayUpload.dependsOn('clean', 'test')
