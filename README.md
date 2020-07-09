@@ -21,13 +21,13 @@ repositories {
 Add a dependency to micronaut-distributed-lock-core
 
 ```
-implementation "com.uberall:micronaut-distributed-lock-core:1.0.0"
+implementation "com.uberall:micronaut-distributed-lock-core:1.0.1"
 ```
 
 and one runtime implementation to your pom.xml/build.gradle
 
 ```
-runtime "com.uberall:micronaut-distributed-lock-data-jdbc:1.0.0"
+runtime "com.uberall:micronaut-distributed-lock-data-jdbc:1.0.1"
 ```
 
 now you can annotate e.g. your @Scheduled methods with @com.uberall.annotation.DistrubtedLock
@@ -60,13 +60,25 @@ class FooJob {
 ### Redis
 A simple implementation using [micronaut-redis](https://micronaut-projects.github.io/micronaut-redis/latest/guide/)
 
+#### Usage
+
+```
+runtime "com.uberall:micronaut-distributed-lock-data-redis:1.0.1"
+```
+
 #### Configuration
 Check the [documentation](https://micronaut-projects.github.io/micronaut-redis/latest/guide/) how to make sure lettuce has a redis server connection.
 
 ### Micronaut Data JDBC
-An implementation using [micronaut-data-jdbc](https://micronaut-projects.github.io/micronaut-data/latest/guide/#jdbcQuickStart). If you want to use a non-default datasource
-just configure one that is named `lock` which is used when defined.
-You will need to add a table to your datasource that has 3 columns: 
+An implementation using [micronaut-data-jdbc](https://micronaut-projects.github.io/micronaut-data/latest/guide/#jdbcQuickStart).
+
+#### Usage
+
+```
+runtime "com.uberall:micronaut-distributed-lock-data-jdbc:1.0.1"
+```
+
+Additionally, You will need to add a table to your datasource that has 3 columns: 
 
 | column |  type | description |
 |--------|--------|--------|
@@ -74,7 +86,7 @@ You will need to add a table to your datasource that has 3 columns:
 | name | VARCHAR | The name of the lock, length depends on your usage, 255 should be safe |
 |  until |  DATETIME |  The datetime until this lock is valid |
 
-For MySQL/MariaDB/Aurora a compatible create statement would be:
+For MySQL or MariaDB a compatible create statement would be:
 
 ```mysql
 CREATE TABLE IF NOT EXISTS `distributed_lock`
@@ -87,4 +99,27 @@ CREATE TABLE IF NOT EXISTS `distributed_lock`
   DEFAULT CHARSET = latin1;
 ```
 
-This implementation is fully compatible and tested with Postgres and any other ANSI SQL Database. 
+#### Configuration
+If you want to use a non-default datasource just configure one named `lock`.
+E.g.:
+
+```yaml
+datasources:
+  default:
+    url: jdbc:mysql://production-server/all-the-important-data
+    driverClassName: com.mysql.cj.jdbc.Driver
+    username: user
+    password: pass
+    schema-generate: none
+    dialect: MYSQL
+    pooled: true
+  lock:
+    url: jdbc:mysql://lock-server/the-lock-schema
+    driverClassName: com.mysql.cj.jdbc.Driver
+    username: resu
+    password: ssap
+    dialect: MYSQL
+    pooled: true
+```
+
+This implementation is fully compatible and tested with Postgres and should simply work with any other halfway ANSI compatible SQL Database. 
