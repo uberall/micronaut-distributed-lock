@@ -2,7 +2,6 @@ dependencies {
     annotationProcessor(platform("io.micronaut:micronaut-bom:$micronautVersion"))
     annotationProcessor("io.micronaut:micronaut-inject-java")
     implementation(platform("io.micronaut:micronaut-bom:$micronautVersion"))
-    implementation("io.micronaut:micronaut-inject")
     implementation("io.micronaut:micronaut-runtime")
     runtimeOnly("ch.qos.logback:logback-classic")
     testImplementation(platform("io.micronaut:micronaut-bom:$micronautVersion"))

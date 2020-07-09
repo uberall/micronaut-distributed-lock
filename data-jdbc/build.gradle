@@ -1,4 +1,3 @@
-
 dependencies {
     annotationProcessor("io.micronaut:micronaut-validation")
     implementation("io.micronaut:micronaut-validation")
@@ -12,26 +11,4 @@ dependencies {
     testRuntime "org.postgresql:postgresql:42.2.14"
 
     implementation project(":core")
-}
-
-// use JUnit 5 platform
-test {
-    useJUnitPlatform()
-}
-
-java {
-    sourceCompatibility = JavaVersion.toVersion('1.8')
-    targetCompatibility = JavaVersion.toVersion('1.8')
-}
-
-tasks.withType(JavaCompile) {
-    options.encoding = "UTF-8"
-    options.compilerArgs.addAll([
-            '-parameters',
-            // enables incremental compilation
-            '-Amicronaut.processing.incremental=true',
-            '-Amicronaut.processing.annotations=com.uberall.*',
-            "-Amicronaut.processing.group=$project.group",
-            "-Amicronaut.processing.module=$project.name",
-    ])
 }
