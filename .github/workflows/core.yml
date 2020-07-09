@@ -2,7 +2,7 @@ name: core
 on: ["push"]
 
 jobs:
-  spotbugs:
+  checkstyle:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -11,7 +11,7 @@ jobs:
         with:
           java-version: 1.8
       - name: Build with Gradle
-        run: ./gradlew core:spotbugsMain --no-daemon --stacktrace
+        run: ./gradlew core:checkstyleMain --no-daemon --stacktrace
   test:
     runs-on: ubuntu-latest
     steps:

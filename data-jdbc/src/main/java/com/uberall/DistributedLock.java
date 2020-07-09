@@ -22,6 +22,11 @@ public class DistributedLock {
     public DistributedLock() {
     }
 
+    /**
+     * Initiates a new DistributedLock with the given name and until time.
+     * @param name of the lock
+     * @param until when this lock is valid
+     */
     public DistributedLock(@NotNull String name, @NotNull LocalDateTime until) {
         this();
         this.name = name;

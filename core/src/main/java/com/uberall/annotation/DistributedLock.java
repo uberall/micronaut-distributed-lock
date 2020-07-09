@@ -18,8 +18,8 @@ import java.lang.annotation.Target;
 public @interface DistributedLock {
 
     /**
-     * A Closure that might be used to get the name, defaults to the classname
-     * If defined, the closure is called with the methods parameters in a Map
+     * Overwrites the lock name with the given value.
+     * By default the locks name will be className:methodName
      */
     String name() default "";
 
@@ -27,7 +27,6 @@ public @interface DistributedLock {
      * The time to life for the lock in seconds. defaults to 60
      */
     int ttl() default 60;
-
 
     /**
      * Whether or not method parameters should be appended to the name.

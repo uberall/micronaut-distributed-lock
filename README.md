@@ -123,3 +123,13 @@ datasources:
 ```
 
 This implementation is fully compatible and tested with Postgres and should simply work with any other halfway ANSI compatible SQL Database. 
+
+## Development
+No special setup is needed to start development. Just hack ahead and create a MR.
+
+## Publishing
+
+You'll need to be in the uberall organisation in Bintray to be able to publish the latest version of this plugin.
+also `BINTRAY_USER` and `BINTRAY_API_KEY` environment variables need to be set.
+
+Simply run `./gradlew :bintrayUpload` to upload all artifacts to bintray

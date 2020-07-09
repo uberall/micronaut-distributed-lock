@@ -3,12 +3,12 @@ plugins {
     id 'maven-publish'
     id "com.diffplug.eclipse.apt" version "3.22.0"
     id "com.jfrog.bintray" version "1.8.5"
-    id "com.github.spotbugs" version "4.4.4"
 }
 
 subprojects {
     apply plugin: "groovy"
     apply plugin: "com.diffplug.eclipse.apt"
+    apply plugin: "checkstyle"
 
     group "com.uberall"
     version libVersion
@@ -31,7 +31,14 @@ subprojects {
     }
 
     apply from: "$rootProject.projectDir/gradle/micronaut.gradle"
-    apply from: "$rootProject.projectDir/gradle/spotbugs.gradle"
     apply from: "$rootProject.projectDir/gradle/publish.gradle"
+
+}
+
+task publish(overwrite: true, type: GradleBuild) {
+    dependsOn 'clean'
+    dependsOn 'test'
+    dependsOn 'checkstyleMain'
+    tasks = ['core:bintrayUpload', 'redis:bintrayUpload', 'data-jdbc:bintrayUpload']
 
 }

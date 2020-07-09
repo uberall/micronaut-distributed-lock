@@ -33,7 +33,7 @@ public class DistributedLockInterceptor implements MethodInterceptor<Object, Obj
     @Override
     public Object intercept(MethodInvocationContext<Object, Object> context) {
         String lockName = context.stringValue(getClazz(), NAME_PARAMETER).orElse(createLockName(context));
-        int ttl = context.intValue(getClazz(), TTL_PARAMETER).orElse(60);
+        final int ttl = context.intValue(getClazz(), TTL_PARAMETER).orElse(60);
         boolean appendParameters = context.booleanValue(getClazz(), APPEND_PARAMETER).orElse(false);
 
         if (appendParameters) {

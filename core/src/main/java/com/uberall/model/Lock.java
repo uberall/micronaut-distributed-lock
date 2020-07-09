@@ -10,6 +10,11 @@ public class Lock {
     public Lock() {
     }
 
+    /**
+     * initiates a new Lock with the given name and until date set.
+     * @param name of the lock
+     * @param until when this lock is valid
+     */
     public Lock(String name, LocalDateTime until) {
         this();
         this.name = name;

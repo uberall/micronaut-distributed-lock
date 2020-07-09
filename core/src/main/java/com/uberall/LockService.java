@@ -1,7 +1,6 @@
 package com.uberall;
 
 import com.uberall.model.Lock;
-import io.micronaut.core.annotation.Internal;
 
 import javax.inject.Singleton;
 import java.util.Optional;
@@ -20,7 +19,7 @@ public interface LockService {
     }
 
     /**
-     * DO NOT USE THIS METHOD IN PRODUCTION!
+     * DO NOT USE THIS METHOD IN PRODUCTION.
      * This is for Tests only!
      */
     default void clear() {
