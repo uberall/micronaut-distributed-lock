@@ -1,13 +1,12 @@
 package com.uberall;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(
-        uniqueConstraints = @UniqueConstraint(columnNames = {"name"})
-)
 public class DistributedLock {
 
     @NotNull
