@@ -2,7 +2,7 @@ package com.uberall;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.uberall.model.Lock;
+import com.uberall.models.Lock;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.api.sync.RedisCommands;
 import io.lettuce.core.api.sync.RedisServerCommands;
@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Optional;
 import java.util.function.Function;

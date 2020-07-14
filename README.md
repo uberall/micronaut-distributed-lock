@@ -30,12 +30,10 @@ and one runtime implementation to your pom.xml/build.gradle
 runtime "com.uberall:micronaut-distributed-lock-data-jdbc:1.0.2"
 ```
 
-now you can annotate e.g. your @Scheduled methods with @com.uberall.annotation.DistrubtedLock
+now you can annotate e.g. your @Scheduled methods with @com.uberall.annotations.DistrubtedLock
 
 ```groovy
-package com.uberall
-
-import com.uberall.annotation.DistributedLock
+import com.uberall.annotations.DistributedLock
 import io.micronaut.scheduling.annotation.Scheduled
 
 import javax.inject.Inject
@@ -54,6 +52,16 @@ class FooJob {
     }
 }
 ```
+
+### Configuration 
+
+To disable the library completely (recommended in tests) you can set `micronaut.distrubted-lock-enabled` to `false` in application.groovy
+
+````yaml
+micronaut:
+    distributed-lock:
+      enabled: false
+````
 
 ## Implementations
 
@@ -100,10 +108,13 @@ CREATE TABLE IF NOT EXISTS `distributed_lock`
 ```
 
 #### Configuration
-If you want to use a non-default datasource just configure one named `lock`.
+If you want to use a non-default datasource you can set the lock database name by setting `micronaut.distributed.lock.database-name` and defining a database with that name
 E.g.:
 
 ```yaml
+micronaut:
+  distributed-lock:
+    database-name: lock
 datasources:
   default:
     url: jdbc:mysql://production-server/all-the-important-data
@@ -129,7 +140,7 @@ No special setup is needed to start development. Just hack ahead and create a MR
 
 ## Publishing
 
-You'll need to be in the uberall organisation in Bintray to be able to publish the latest version of this plugin.
+You'll need to be in the uberall organisation in Bintray to be able to publish the latest version.
 also `BINTRAY_USER` and `BINTRAY_API_KEY` environment variables need to be set.
 
 Simply run `./gradlew :bintrayUpload` to upload all artifacts to bintray

@@ -1,16 +1,19 @@
-package com.uberall.interceptor;
+package com.uberall.interceptors;
 
 import com.uberall.LockService;
-import com.uberall.annotation.DistributedLock;
-import com.uberall.model.Lock;
+import com.uberall.annotations.DistributedLock;
+import com.uberall.models.Lock;
 import io.micronaut.aop.MethodInterceptor;
 import io.micronaut.aop.MethodInvocationContext;
+import io.micronaut.context.annotation.Value;
+import io.micronaut.core.convert.ConversionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.lang.annotation.Annotation;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -24,6 +27,8 @@ public class DistributedLockInterceptor implements MethodInterceptor<Object, Obj
     private static final String APPEND_PARAMETER = "appendParameters";
 
     final LockService lockService;
+    @Value("${micronaut.distributed-lock.enabled:true}")
+    boolean enabled;
 
     @Inject
     public DistributedLockInterceptor(LockService lockService) {
@@ -32,8 +37,19 @@ public class DistributedLockInterceptor implements MethodInterceptor<Object, Obj
 
     @Override
     public Object intercept(MethodInvocationContext<Object, Object> context) {
+        if (!enabled) {
+            return context.proceed();
+        }
+
         String lockName = context.stringValue(getClazz(), NAME_PARAMETER).orElse(createLockName(context));
-        final int ttl = context.intValue(getClazz(), TTL_PARAMETER).orElse(60);
+
+        final String ttl = context.stringValue(getClazz(), TTL_PARAMETER).orElse("1m");
+
+        final Duration duration = ConversionService.SHARED.convert(ttl, Duration.class).orElseGet(() -> {
+            LOG.error(ttl + "could not be converted to Duration, falling back to 1m for " + createLockName(context));
+            return Duration.ofMinutes(1);
+        });
+
         boolean appendParameters = context.booleanValue(getClazz(), APPEND_PARAMETER).orElse(false);
 
         if (appendParameters) {
@@ -54,7 +70,7 @@ public class DistributedLockInterceptor implements MethodInterceptor<Object, Obj
             return null;
         }
 
-        lockService.create(new Lock(lockName, LocalDateTime.now().plusSeconds(ttl)));
+        lockService.create(new Lock(lockName, LocalDateTime.now().plus(duration)));
         return context.proceed();
     }
 

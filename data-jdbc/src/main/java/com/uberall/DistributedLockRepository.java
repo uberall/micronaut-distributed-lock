@@ -7,7 +7,7 @@ import io.micronaut.data.repository.CrudRepository;
 import java.util.Optional;
 
 @JdbcRepository
-@Repository("lock")
+@Repository("${micronaut.distributed-lock.database-name:default}")
 interface DistributedLockRepository extends CrudRepository<DistributedLock, Long> {
 
     Optional<DistributedLock> findByName(String name);

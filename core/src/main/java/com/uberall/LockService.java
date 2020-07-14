@@ -1,6 +1,6 @@
 package com.uberall;
 
-import com.uberall.model.Lock;
+import com.uberall.models.Lock;
 
 import javax.inject.Singleton;
 import java.util.Optional;

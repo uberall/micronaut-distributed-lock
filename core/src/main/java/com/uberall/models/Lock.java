@@ -1,4 +1,4 @@
-package com.uberall.model;
+package com.uberall.models;
 
 import java.time.LocalDateTime;
 

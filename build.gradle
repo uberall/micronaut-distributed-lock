@@ -40,5 +40,9 @@ task publish(overwrite: true, type: GradleBuild) {
     dependsOn 'test'
     dependsOn 'checkstyleMain'
     tasks = ['core:bintrayUpload', 'redis:bintrayUpload', 'data-jdbc:bintrayUpload']
+}
 
+task full_test(type: GradleBuild) {
+    dependsOn 'clean'
+    tasks = ['core:checkstyleMain', 'redis:checkstyleMain', 'data-jdbc:checkstyleMain', 'core:test', 'redis:test', 'data-jdbc:test']
 }

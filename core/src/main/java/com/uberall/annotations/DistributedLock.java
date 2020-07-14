@@ -1,6 +1,6 @@
-package com.uberall.annotation;
+package com.uberall.annotations;
 
-import com.uberall.interceptor.DistributedLockInterceptor;
+import com.uberall.interceptors.DistributedLockInterceptor;
 import io.micronaut.aop.Around;
 import io.micronaut.context.annotation.Executable;
 import io.micronaut.context.annotation.Type;
@@ -24,9 +24,9 @@ public @interface DistributedLock {
     String name() default "";
 
     /**
-     * The time to life for the lock in seconds. defaults to 60
+     * The time to life for the lock in seconds. defaults to one minute
      */
-    int ttl() default 60;
+    String ttl() default "1m";
 
     /**
      * Whether or not method parameters should be appended to the name.
