@@ -21,13 +21,13 @@ repositories {
 Add a dependency to micronaut-distributed-lock-core
 
 ```
-implementation "com.uberall:micronaut-distributed-lock-core:1.0.2"
+implementation "com.uberall:micronaut-distributed-lock-core:1.1.0"
 ```
 
 and one runtime implementation to your pom.xml/build.gradle
 
 ```
-runtime "com.uberall:micronaut-distributed-lock-data-jdbc:1.0.2"
+runtime "com.uberall:micronaut-distributed-lock-data-jdbc:1.1.0"
 ```
 
 now you can annotate e.g. your @Scheduled methods with @com.uberall.annotations.DistrubtedLock
@@ -71,7 +71,7 @@ A simple implementation using [micronaut-redis](https://micronaut-projects.githu
 #### Usage
 
 ```
-runtime "com.uberall:micronaut-distributed-lock-data-redis:1.0.2"
+runtime "com.uberall:micronaut-distributed-lock-data-redis:1.1.0"
 ```
 
 #### Configuration
@@ -83,7 +83,7 @@ An implementation using [micronaut-data-jdbc](https://micronaut-projects.github.
 #### Usage
 
 ```
-runtime "com.uberall:micronaut-distributed-lock-data-jdbc:1.0.2"
+runtime "com.uberall:micronaut-distributed-lock-data-jdbc:1.1.0"
 ```
 
 Additionally, You will need to add a table to your datasource that has 3 columns: 
