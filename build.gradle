@@ -32,13 +32,9 @@ subprojects {
 
     apply from: "$rootProject.projectDir/gradle/micronaut.gradle"
     apply from: "$rootProject.projectDir/gradle/publish.gradle"
-
 }
 
 task publish(overwrite: true, type: GradleBuild) {
-    dependsOn 'clean'
-    dependsOn 'test'
-    dependsOn 'checkstyleMain'
     tasks = ['core:bintrayUpload', 'redis:bintrayUpload', 'data-jdbc:bintrayUpload']
 }
 
