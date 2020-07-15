@@ -86,6 +86,14 @@ An implementation using [micronaut-data-jdbc](https://micronaut-projects.github.
 runtime "com.uberall:micronaut-distributed-lock-data-jdbc:1.1.0"
 ```
 
+After adding the runtime dependency into build.gradle you'll have to tell the library which sql dialect to use
+
+```yaml
+micronaut:
+  distributed-lock:
+    dialect: mysql # OR postgres
+```
+
 Additionally, You will need to add a table to your datasource that has 3 columns: 
 
 | column |  type | description |
@@ -108,13 +116,14 @@ CREATE TABLE IF NOT EXISTS `distributed_lock`
 ```
 
 #### Configuration
-If you want to use a non-default datasource you can set the lock database name by setting `micronaut.distributed.lock.database-name` and defining a database with that name
+If you want to use a non-default datasource you can set the lock database name by setting `micronaut.distributed.lock.datasource-name` and defining a database with that name
 E.g.:
 
 ```yaml
 micronaut:
   distributed-lock:
-    database-name: lock
+    datasource-name: lock
+    dialect: mysql
 datasources:
   default:
     url: jdbc:mysql://production-server/all-the-important-data
@@ -132,8 +141,6 @@ datasources:
     dialect: MYSQL
     pooled: true
 ```
-
-This implementation is fully compatible and tested with Postgres and should simply work with any other halfway ANSI compatible SQL Database. 
 
 ## Development
 No special setup is needed to start development. Just hack ahead and create a MR.

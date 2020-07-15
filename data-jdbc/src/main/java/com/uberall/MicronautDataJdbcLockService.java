@@ -1,6 +1,7 @@
 package com.uberall;
 
 import com.uberall.models.Lock;
+import com.uberall.repositories.DistributedLockRepository;
 
 import javax.inject.Inject;
 import java.util.Optional;

@@ -1,9 +1,10 @@
 datasources:
   foo:
-    url: jdbc:tc:postgresql:12:///distlock
+    url: jdbc:tc:mysql:5.6.23:///test
     driverClassName: org.testcontainers.jdbc.ContainerDatabaseDriver
-    schema-generate: CREATE_DROP
-    dialect: postgres
+    schema-generate: CREATE
+    dialect: mysql
 micronaut:
   distributed-lock:
-    database-name: foo
+    datasource-name: foo
+    dialect: mysql
