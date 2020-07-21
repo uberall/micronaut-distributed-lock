@@ -34,4 +34,12 @@ public @interface DistributedLock {
      * Should only be set to true if parameter values are implementing a proper toString method
      */
     boolean appendParams() default false;
+
+
+    /**
+     * Whether or not to cleanup the lock after execution.
+     * Can be set to false if you only want to block parallel execution.
+     * Default: true
+     */
+    boolean cleanup() default true;
 }

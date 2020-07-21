@@ -1,11 +1,13 @@
 package com.uberall
 
 import com.uberall.interceptors.DistributedLockInterceptor
+import io.micronaut.scheduling.TaskScheduler
 import io.micronaut.test.annotation.MicronautTest
 import spock.lang.Specification
 import spock.lang.Unroll
 
 import javax.inject.Inject
+import java.time.Duration
 
 @MicronautTest
 @Unroll
@@ -17,11 +19,21 @@ class CoreSpec extends Specification {
 
     @Inject DistributedLockInterceptor distributedLockInterceptor
 
-    void 'DistributedLock annotation is working as expected'() {
+    @Inject TaskScheduler taskScheduler
+
+    void setup() {
+        example.counter = 0
+        lockService.clear()
+    }
+
+    void 'DistributedLock annotation is working as expected when cleanup is disabled'() {
         when: "we run a locked function 10 times"
         10.times {
-            example.foo()
+            taskScheduler.schedule(Duration.ofMillis(it * 100), example.&foo)
         }
+
+        and: "we wait for them to be started"
+        sleep(1500)
 
         then: "we only executed it once"
         example.counter == 1
@@ -43,6 +55,29 @@ class CoreSpec extends Specification {
 
         then: "the method was executed"
         example.counter == 3
+
+    }
+
+    void 'DistributedLock annotation is working as expected when cleanup is enabled'() {
+        when: "we run a locked function 10 times"
+        3.times {
+            taskScheduler.schedule(Duration.ofMillis(it * 100), example.&bar)
+        }
+
+        and: "we wait for them to be at least started"
+        Thread.sleep(1000)
+
+        then: "we only executed it once"
+        example.counter == 1
+
+        when: "we wait a little longer for the one running invocation to finish"
+        Thread.sleep(5000)
+
+        and: "execute the method once on the main thread"
+        example.bar()
+
+        then: "it was executed again although the lock ttl isn't reached"
+        example.counter == 2
     }
 
     void 'DistributedLock annotation is ignored when disabled'() {
@@ -60,7 +95,5 @@ class CoreSpec extends Specification {
 
         then:
         example.counter == 10
-
     }
-
 }

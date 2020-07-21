@@ -24,7 +24,9 @@ public class DistributedLockInterceptor implements MethodInterceptor<Object, Obj
     private static final Logger LOG = LoggerFactory.getLogger(DistributedLockInterceptor.class);
     private static final String NAME_PARAMETER = "name";
     private static final String TTL_PARAMETER = "ttl";
+    private static final String CLEANUP_PARAMETER = "cleanup";
     private static final String APPEND_PARAMETER = "appendParameters";
+
 
     final LockService lockService;
     @Value("${micronaut.distributed-lock.enabled:true}")
@@ -44,6 +46,7 @@ public class DistributedLockInterceptor implements MethodInterceptor<Object, Obj
         String lockName = context.stringValue(getClazz(), NAME_PARAMETER).orElse(createLockName(context));
 
         final String ttl = context.stringValue(getClazz(), TTL_PARAMETER).orElse("1m");
+        final boolean cleanup = context.booleanValue(getClazz(), CLEANUP_PARAMETER).orElse(true);
 
         final Duration duration = ConversionService.SHARED.convert(ttl, Duration.class).orElseGet(() -> {
             LOG.error(ttl + "could not be converted to Duration, falling back to 1m for " + createLockName(context));
@@ -70,8 +73,20 @@ public class DistributedLockInterceptor implements MethodInterceptor<Object, Obj
             return null;
         }
 
-        lockService.create(new Lock(lockName, LocalDateTime.now().plus(duration)));
-        return context.proceed();
+        lock = new Lock(lockName, LocalDateTime.now().plus(duration));
+        lockService.create(lock);
+
+        Object result;
+
+        try {
+            result = context.proceed();
+        } finally {
+            if (cleanup) {
+                lockService.delete(lock);
+            }
+        }
+
+        return result;
     }
 
     private Class<? extends Annotation> getClazz() {

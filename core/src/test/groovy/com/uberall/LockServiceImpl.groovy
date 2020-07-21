@@ -7,7 +7,7 @@ import javax.inject.Singleton
 @Singleton
 class LockServiceImpl implements LockService {
 
-    static final Map<String, Lock> LOCK_REPOSITORY = [:]
+    static final synchronized Map<String, Lock> LOCK_REPOSITORY = [:]
 
     @Override
     void create(Lock lock) {

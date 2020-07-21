@@ -45,11 +45,89 @@ class FooJob {
     @Inject
     FooService fooService
 
-    @DistributedLock(ttl = 60)
+    @DistributedLock(ttl = "1m")
     @Scheduled(fixedRate = '5m')
     void perform() {
-
+        // some long running asynchornous task
     }
+}
+```
+
+The result is that no matter how often you call this method, **as long as the first invocation is still running** no further invocations will be executed,
+no matter who is trying to execute. 
+
+### Annotation Parameters
+
+| name | default | description |
+| --- |  --- | ---  |
+| ttl  | "1m" | The lock duration. **If cleanup is set to false this prohibits any further execution for the given duration.** Otherwise this is a mere "hint" when to allow execution again because e.g. the first execution was interrupted and the lock has never been cleaned up |  
+| name  | {methodName} |  The name of the lock, this is used to identify the lock in the repository and should be unique across you codebase. If not set the method name is used | 
+| appendParameters | false  |  Whether or not to append parameters to the lock name. If set to true a key/value map of the parameters will be appeneded to the lock name. This is helpful in environments where you only want to prohibit e.g. processing of the same database entitiy on 2 servers |   
+| cleanup | true | Whether or not to cleanup the lock after method execution |
+
+### TTL and Cleanup
+There can be some confusion with TTL and Cleanup so here is use cases of when to set cleanup and what to set ttl to in other cases.
+
+#### Cleanup = true (default)
+The Interceptor will always clean up the lock, no matter whether the method execution was successful or not, after method execution.
+You could see the TTL as a "hint" on execution time. If the lock is not cleaned up (e.g. server is shutdown during method execution) the next round is still running.
+
+The typical use case is a distributed application where you want a scheduled job to only run once every X minutes even if you are running your micronaut application on 20 servers.
+TTL should be set to not block the next scheduled execution. E.g.:
+
+```groovy
+import com.uberall.annotations.DistributedLock
+import io.micronaut.scheduling.annotation.Scheduled
+
+import javax.inject.Inject
+import javax.inject.Singleton
+
+@Singleton
+class FooJob {
+
+    @Inject
+    FooService fooService
+
+    @DistributedLock(ttl = "4m50s")
+    @Scheduled(fixedRate = '5m')
+    void perform() {
+        fooService.runTheThingThatIsSupposedToHappenEveryFiveMinutes()
+    }
+}
+```
+
+### Cleanup = false
+In this scenario the lock will not be released after method execution and no more invocations of the method are actually executed for the duration of the lock lifetime.
+
+A typical example is a "rate limited" method e.g. You are doing some heavy analytics every 10 minutes and if the analytics haven't resulted in something unusual, you only want the result to be sent out once a day.
+
+```groovy
+import com.uberall.annotations.DistributedLock
+import io.micronaut.scheduling.annotation.Scheduled
+
+import javax.inject.Inject
+import javax.inject.Singleton
+
+@Singleton
+class FooJob {
+
+    @Inject FooService fooService
+
+    @Scheduled(fixedRate = '10m')
+    void perform() {
+        def result = fooService.getResult()
+        if (result.bad) {
+            fooService.sendResult(result) // will always happen
+        } else {
+            sendResult(result) // is only executed once a day
+        }
+    }
+    
+    @DistributedLock(ttl = "1d", cleanup = false)
+    void sendResult(def result) {
+        fooService.sendResult(result)
+    }
+
 }
 ```
 
