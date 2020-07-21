@@ -30,7 +30,7 @@ and one runtime implementation to your pom.xml/build.gradle
 runtime "com.uberall:micronaut-distributed-lock-data-jdbc:1.1.1"
 ```
 
-now you can annotate e.g. your @Scheduled methods with @com.uberall.annotations.DistrubtedLock
+now you can annotate e.g. your @Scheduled methods with @com.uberall.annotations.DistributedLock
 
 ```groovy
 import com.uberall.annotations.DistributedLock
@@ -55,7 +55,7 @@ class FooJob {
 
 ### Configuration 
 
-To disable the library completely (recommended in tests) you can set `micronaut.distrubted-lock-enabled` to `false` in application.groovy
+To disable the library completely (recommended in tests) you can set `micronaut.distributed-lock-enabled` to `false` in application.groovy
 
 ````yaml
 micronaut:
