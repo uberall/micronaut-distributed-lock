@@ -13,21 +13,31 @@ class Example {
     static int counter = 0
 
     @SuppressWarnings('GrMethodMayBeStatic')
-    @DistributedLock(name = "test", ttl = "3s", cleanup = false)
+    @DistributedLock(ttl = "3s", cleanup = false)
     @Scheduled(initialDelay = "3d", fixedDelay = "10h")
-    void foo() {
-        log.info("foo: start")
+    void instantRunningNoCleanup() {
+        log.info("instantRunningNoCleanup: start")
         counter++
-        log.info("foo: done")
+        log.info("instantRunningNoCleanup: done")
     }
 
     @SuppressWarnings('GrMethodMayBeStatic')
-    @DistributedLock(name = "test", ttl = "5m")
+    @DistributedLock(ttl = "5m")
     @Scheduled(initialDelay = "3d", fixedDelay = "10h")
-    void bar() {
-        log.info("bar: start")
+    void normalRuntimeWithCleanup() {
+        log.info("normalRuntimeWithCleanup: start")
         counter++
         sleep(1000)
-        log.info("bar: done")
+        log.info("normalRuntimeWithCleanup: done")
+    }
+
+    @SuppressWarnings('GrMethodMayBeStatic')
+    @DistributedLock(ttl = "5m", appendParams = true, cleanup = false)
+    @Scheduled(initialDelay = "3d", fixedDelay = "10h")
+    void longRunningWithCleanup(def i) {
+        log.info("longRunningWithCleanup $i: start")
+        counter++
+        sleep(5000)
+        log.info("longRunningWithCleanup $i: done")
     }
 }

@@ -1,40 +1,35 @@
 package com.uberall
 
+import groovy.util.logging.Slf4j
 import io.micronaut.test.annotation.MicronautTest
-import spock.lang.Specification
-
-import javax.inject.Inject
+import io.micronaut.test.support.TestPropertyProvider
+import org.testcontainers.containers.GenericContainer
+import org.testcontainers.containers.wait.strategy.HostPortWaitStrategy
+import org.testcontainers.spock.Testcontainers
 
 @MicronautTest
-class RedisLockSpec extends Specification {
+@Slf4j
+@Testcontainers
+class RedisLockSpec extends ImplementationSpec<RedisLockService> implements TestPropertyProvider {
 
-    @Inject RedisLockService redisLockService
-    @Inject Example example
+    public static final String REDIS_IMAGE = "redis"
 
-    void 'Redis locking is working as expected'() {
-        when:
-        10.times {
-            example.foo()
-        }
+    @Lazy
+    static GenericContainer redisContainer = {
+        GenericContainer redis = new GenericContainer<>(REDIS_IMAGE)
+                .withExposedPorts(6379)
+                .waitingFor(new HostPortWaitStrategy())
+        redis.start()
 
-        then:
-        example.counter == 1
+        return redis
+    }()
 
-        and:
-        redisLockService.clear()
-        example.foo()
-
-        then:
-        example.counter == 2
-
-        when:
-        Thread.sleep(5000)
-
-        and:
-        example.foo()
-
-        then:
-        example.counter == 3
+    void cleanupSpec() {
+        redisContainer.stop()
     }
 
+    @Override
+    Map<String, String> getProperties() {
+        ["redis.uri": "redis://localhost:$redisContainer.firstMappedPort"]
+    }
 }

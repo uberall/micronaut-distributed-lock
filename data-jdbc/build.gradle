@@ -6,12 +6,15 @@ dependencies {
     implementation "io.micronaut.data:micronaut-data-jdbc:$micronautDataVersion"
     implementation "jakarta.persistence:jakarta.persistence-api:2.2.2"
     testRuntime "io.micronaut.sql:micronaut-jdbc-hikari"
-    testCompile "org.testcontainers:spock:1.14.1"
+    testImplementation 'io.micronaut.configuration:micronaut-flyway:1.2.0'
+    testImplementation "org.testcontainers:spock:1.14.1"
     testRuntime "org.testcontainers:postgresql:1.14.1"
     testRuntime "org.testcontainers:mysql:1.14.1"
     testRuntime "org.postgresql:postgresql:42.2.14"
     testRuntime "mysql:mysql-connector-java:8.0.19"
     implementation project(":core")
+
+    testImplementation project(":core").sourceSets.test.output
 }
 
 bintrayUpload.dependsOn('clean', 'test')

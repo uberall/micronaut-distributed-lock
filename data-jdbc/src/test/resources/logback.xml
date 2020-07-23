@@ -9,7 +9,7 @@
         </encoder>
     </appender>
 
-    <!--    <logger name="io.micronaut.context.condition" level="TRACE"/>-->
+    <logger name="com.uberall.interceptors.DistributedLockInterceptor" level="TRACE"/>
 
     <root level="info">
         <appender-ref ref="STDOUT"/>

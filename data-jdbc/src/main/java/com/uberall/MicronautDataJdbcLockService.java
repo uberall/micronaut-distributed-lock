@@ -1,9 +1,12 @@
 package com.uberall;
 
+import com.uberall.exceptions.DistributedLockCreationException;
 import com.uberall.models.Lock;
 import com.uberall.repositories.DistributedLockRepository;
+import io.micronaut.data.exceptions.DataAccessException;
 
 import javax.inject.Inject;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Optional;
 
 public class MicronautDataJdbcLockService implements LockService {
@@ -27,8 +30,15 @@ public class MicronautDataJdbcLockService implements LockService {
     }
 
     @Override
-    public void create(Lock lock) {
-        distributedLockRepository.save(new DistributedLock(lock.getName(), lock.getUntil()));
+    public void save(Lock lock) {
+        try {
+            distributedLockRepository.save(new DistributedLock(lock.getName(), lock.getUntil()));
+        } catch (DataAccessException e) {
+            if (e.getCause() instanceof SQLIntegrityConstraintViolationException) {
+                throw new DistributedLockCreationException(lock.getName(), e);
+            }
+            throw e;
+        }
     }
 
     @Override

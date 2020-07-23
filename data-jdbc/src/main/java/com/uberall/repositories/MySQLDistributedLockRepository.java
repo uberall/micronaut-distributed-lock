@@ -8,5 +8,5 @@ import io.micronaut.data.model.query.builder.sql.Dialect;
 @JdbcRepository(dialect = Dialect.MYSQL)
 @Repository("${micronaut.distributed-lock.datasource-name:default}")
 @Requires(property = "micronaut.distributed-lock.dialect", value = "mysql")
-abstract public class MySQLDistributedLockRepository implements DistributedLockRepository {
+public abstract  class MySQLDistributedLockRepository implements DistributedLockRepository {
 }
