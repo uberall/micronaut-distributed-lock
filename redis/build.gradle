@@ -1,7 +1,10 @@
 dependencies {
     implementation("io.micronaut.redis:micronaut-redis-lettuce")
-    testCompile "com.github.kstyrc:embedded-redis:0.6"
+    testCompile "org.testcontainers:spock:1.14.1"
+
     implementation project(":core")
+
+    testImplementation project(":core").sourceSets.test.output
 }
 
 bintrayUpload.dependsOn('clean', 'test')

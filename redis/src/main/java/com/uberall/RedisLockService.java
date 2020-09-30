@@ -2,6 +2,7 @@ package com.uberall;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.uberall.exceptions.DistributedLockCreationException;
 import com.uberall.models.Lock;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.api.sync.RedisCommands;
@@ -11,8 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.time.ZoneId;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class RedisLockService implements LockService {
@@ -20,7 +21,8 @@ public class RedisLockService implements LockService {
     private static final Logger LOG = LoggerFactory.getLogger(RedisLockService.class);
     private final StatefulRedisConnection<String, String> connection;
     private final ObjectMapper objectMapper;
-    @Value("${micronaut.distributed.lock.redis.prefix:lock.}") String prefix;
+
+    @Value("${micronaut.distributed.lock.redis.prefix:lock.}") private String prefix;
 
     @Inject
     public RedisLockService(StatefulRedisConnection<String, String> connection, ObjectMapper objectMapper) {
@@ -31,7 +33,7 @@ public class RedisLockService implements LockService {
     @Override
     public Optional<Lock> get(String name) {
         Optional<Lock> result = Optional.empty();
-        String json = (String) withRedis(redis -> redis.get(getKey(name)));
+        String json = fromRedis(redis -> redis.get(getKey(name)));
 
         if (json == null) {
             return Optional.empty();
@@ -47,18 +49,23 @@ public class RedisLockService implements LockService {
     }
 
     @Override
-    public void create(Lock lock) {
-        try {
-            String json = objectMapper.writeValueAsString(lock);
-            withRedis(redis -> {
-                long until = lock.getUntil().atZone(ZoneId.systemDefault()).toEpochSecond();
-                long ttl = until - (System.currentTimeMillis() / 1000);
+    public void save(Lock lock) {
+        synchronized (this) {
+            try {
+                final String json = objectMapper.writeValueAsString(lock);
 
-                redis.setex(getKey(lock.getName()), ttl, json);
-                return null;
-            });
-        } catch (JsonProcessingException e) {
-            LOG.error("creating lock json failed", e);
+                final String key = getKey(lock.getName());
+                withRedis(redis -> {
+                    String result = redis.getset(key, json);
+
+                    if (result != null) {
+                        redis.set(key, result);
+                        throw new DistributedLockCreationException(lock.getName(), null);
+                    }
+                });
+            } catch (JsonProcessingException e) {
+                LOG.error("creating lock json failed", e);
+            }
         }
     }
 
@@ -72,18 +79,17 @@ public class RedisLockService implements LockService {
         withRedis(RedisServerCommands::flushall);
     }
 
-    @Override
-    public boolean isAutoCleanCapable() {
-        return true;
-    }
-
     private String getKey(String name) {
         return prefix + name;
     }
 
-    private Object withRedis(Function<RedisCommands<String, String>, Object> function) {
+    private String fromRedis(Function<RedisCommands<String, String>, String> function) {
         RedisCommands<String, String> redis = connection.sync();
         return function.apply(redis);
+    }
+
+    private void withRedis(Consumer<RedisCommands<String, String>> consumer) {
+        consumer.accept(connection.sync());
     }
 
 }

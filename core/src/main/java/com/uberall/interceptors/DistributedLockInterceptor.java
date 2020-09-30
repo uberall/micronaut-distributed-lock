@@ -2,6 +2,7 @@ package com.uberall.interceptors;
 
 import com.uberall.LockService;
 import com.uberall.annotations.DistributedLock;
+import com.uberall.exceptions.DistributedLockCreationException;
 import com.uberall.models.Lock;
 import io.micronaut.aop.MethodInterceptor;
 import io.micronaut.aop.MethodInvocationContext;
@@ -24,11 +25,12 @@ public class DistributedLockInterceptor implements MethodInterceptor<Object, Obj
     private static final Logger LOG = LoggerFactory.getLogger(DistributedLockInterceptor.class);
     private static final String NAME_PARAMETER = "name";
     private static final String TTL_PARAMETER = "ttl";
+    private static final String CLEANUP_PARAMETER = "cleanup";
     private static final String APPEND_PARAMETER = "appendParameters";
 
     final LockService lockService;
-    @Value("${micronaut.distributed-lock.enabled:true}")
-    boolean enabled;
+
+    @Value("${micronaut.distributed-lock.enabled:true}") boolean enabled;
 
     @Inject
     public DistributedLockInterceptor(LockService lockService) {
@@ -38,27 +40,26 @@ public class DistributedLockInterceptor implements MethodInterceptor<Object, Obj
     @Override
     public Object intercept(MethodInvocationContext<Object, Object> context) {
         if (!enabled) {
+            LOG.debug("Interceptor is disabled, going on");
             return context.proceed();
         }
 
-        String lockName = context.stringValue(getClazz(), NAME_PARAMETER).orElse(createLockName(context));
-
-        final String ttl = context.stringValue(getClazz(), TTL_PARAMETER).orElse("1m");
-
-        final Duration duration = ConversionService.SHARED.convert(ttl, Duration.class).orElseGet(() -> {
-            LOG.error(ttl + "could not be converted to Duration, falling back to 1m for " + createLockName(context));
-            return Duration.ofMinutes(1);
-        });
-
-        boolean appendParameters = context.booleanValue(getClazz(), APPEND_PARAMETER).orElse(false);
+        final String methodName = createLockName(context);
+        final boolean appendParameters = context.booleanValue(getClazz(), APPEND_PARAMETER).orElse(false);
+        String lockName = context.stringValue(getClazz(), NAME_PARAMETER).orElse(methodName);
 
         if (appendParameters) {
             lockName = lockName + "-" + convertWithStream(context.getParameterValueMap());
         }
 
+        final String ttl = context.stringValue(getClazz(), TTL_PARAMETER).orElse("1m");
+        final boolean cleanup = context.booleanValue(getClazz(), CLEANUP_PARAMETER).orElse(true);
+        final Duration duration = getDuration(ttl, methodName);
+
         Lock lock = lockService.get(lockName).orElse(null);
         if (lock != null && LocalDateTime.now().isAfter(lock.getUntil())) {
             if (!lockService.isAutoCleanCapable()) {
+                LOG.debug("deleting {}", lock.getName());
                 lockService.delete(lock);
             }
 
@@ -66,12 +67,37 @@ public class DistributedLockInterceptor implements MethodInterceptor<Object, Obj
         }
 
         if (lock != null) {
-            LOG.debug(lockName + "s lock is still valid, skipping execution");
+            LOG.debug("{}s lock is still valid, skipping execution", lockName);
             return null;
         }
 
-        lockService.create(new Lock(lockName, LocalDateTime.now().plus(duration)));
-        return context.proceed();
+        lock = new Lock(lockName, LocalDateTime.now().plus(duration));
+        Object result;
+
+        try {
+            LOG.debug("creating {}", lock.getName());
+            lockService.save(lock);
+        } catch (DistributedLockCreationException e) {
+            LOG.debug(e.getMessage());
+            return null;
+        }
+
+        try {
+            result = context.proceed();
+        } finally {
+            if (cleanup) {
+                lockService.delete(lock);
+            }
+        }
+
+        return result;
+    }
+
+    private Duration getDuration(String ttl, String name) {
+        return ConversionService.SHARED.convert(ttl, Duration.class).orElseGet(() -> {
+            LOG.error("{} could not be converted to Duration, falling back to 1m for {}", ttl, name);
+            return Duration.ofMinutes(1);
+        });
     }
 
     private Class<? extends Annotation> getClazz() {

@@ -1,10 +1,15 @@
 datasources:
   foo:
-    url: jdbc:tc:mysql:5.6.23:///test
+    url: jdbc:tc:mysql:5.7:///test
     driverClassName: org.testcontainers.jdbc.ContainerDatabaseDriver
-    schema-generate: CREATE
+    schema-generate: NONE
     dialect: mysql
 micronaut:
   distributed-lock:
     datasource-name: foo
     dialect: mysql
+flyway:
+  enabled: true
+  datasources:
+    foo:
+      locations: classpath:databasemigrations
