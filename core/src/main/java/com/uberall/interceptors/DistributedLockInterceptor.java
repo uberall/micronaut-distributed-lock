@@ -26,7 +26,7 @@ public class DistributedLockInterceptor implements MethodInterceptor<Object, Obj
     private static final String NAME_PARAMETER = "name";
     private static final String TTL_PARAMETER = "ttl";
     private static final String CLEANUP_PARAMETER = "cleanup";
-    private static final String APPEND_PARAMETER = "appendParameters";
+    private static final String APPEND_PARAMETER = "appendParams";
 
     final LockService lockService;
 
