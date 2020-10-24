@@ -82,7 +82,7 @@ abstract class ImplementationSpec<T extends LockService> extends Specification {
 
     void 'instant parallel invocation does not lead to multiple executions'() {
         when: "we execute our test method 100 times in parallel"
-        100.times { c ->
+        10.times { c ->
             taskScheduler.schedule(Duration.ofMillis(1), { example.noCleanupNoParams(c) })
         }
 
@@ -94,16 +94,16 @@ abstract class ImplementationSpec<T extends LockService> extends Specification {
     }
 
     void 'instant parallel invocation does lead to multiple executions when parameters are appended'() {
-        when: "we execute our test method 100 times in parallel"
-        100.times { c ->
+        when: "we execute our test method 10 times in parallel"
+        10.times { c ->
             taskScheduler.schedule(Duration.ofMillis(1), { example.cleanupWithParameters(c) })
         }
 
         and: "we wait a couple seconds"
-        sleep(5000)
+        sleep(2000)
 
         then:
-        example.counter == 100
+        example.counter == 10
     }
 
     void 'DistributedLock annotation is ignored when disabled'() {

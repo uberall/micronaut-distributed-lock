@@ -23,7 +23,7 @@ class Example {
     void normalRuntimeWithCleanup() {
         log.info("normalRuntimeWithCleanup: start")
         counter++
-        sleep(1000)
+        expensiveBusinessLogic(1000)
         log.info("normalRuntimeWithCleanup: done")
     }
 
@@ -31,7 +31,7 @@ class Example {
     void noCleanupNoParams(def i) {
         log.info("longRunningNoCleanupNoParams $i: start")
         counter++
-        sleep(5000)
+        expensiveBusinessLogic(5000)
         log.info("longRunningNoCleanupNoParams $i: done")
     }
 
@@ -39,7 +39,11 @@ class Example {
     void cleanupWithParameters(def i) {
         log.info("cleanupWithParameters $i: start")
         counter++
-        sleep(1000)
+        expensiveBusinessLogic(1000)
         log.info("cleanupWithParameters $i: done")
+    }
+
+    private void expensiveBusinessLogic(int magicBusinessValue) {
+        sleep(magicBusinessValue)
     }
 }
