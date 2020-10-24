@@ -1,6 +1,6 @@
 dependencies {
     implementation("io.micronaut.redis:micronaut-redis-lettuce")
-    testCompile "org.testcontainers:spock:1.14.1"
+    testCompile "org.testcontainers:spock:$testcontainersVersion"
 
     implementation project(":core")
 

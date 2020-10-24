@@ -2,7 +2,6 @@ package com.uberall
 
 import com.uberall.exceptions.DistributedLockConfigurationException
 import com.uberall.models.Lock
-import groovy.transform.Synchronized
 import io.micronaut.context.annotation.Secondary
 
 import javax.inject.Singleton
