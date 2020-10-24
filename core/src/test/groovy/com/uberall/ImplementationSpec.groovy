@@ -3,7 +3,6 @@ package com.uberall
 import com.uberall.interceptors.DistributedLockInterceptor
 import io.micronaut.scheduling.TaskScheduler
 import io.micronaut.test.annotation.MicronautTest
-import spock.lang.IgnoreRest
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -83,8 +82,8 @@ abstract class ImplementationSpec<T extends LockService> extends Specification {
 
     void 'instant parallel invocation does not lead to multiple executions'() {
         when: "we execute our test method 100 times in parallel"
-        100.times { c ->
-            taskScheduler.schedule(Duration.ofMillis(100), { example.longRunningWithCleanup(c) })
+        5.times { c ->
+            taskScheduler.schedule(Duration.ofMillis(1), { example.noCleanupNoParams(c) })
         }
 
         and: "we wait a couple seconds"
@@ -92,6 +91,19 @@ abstract class ImplementationSpec<T extends LockService> extends Specification {
 
         then:
         example.counter == 1
+    }
+
+    void 'instant parallel invocation does lead to multiple executions when parameters are appended'() {
+        when: "we execute our test method 5 times in parallel"
+        5.times { c ->
+            taskScheduler.schedule(Duration.ofMillis(1), { example.cleanupWithParameters(c) })
+        }
+
+        and: "we wait a couple seconds"
+        sleep(2000)
+
+        then:
+        example.counter == 5
     }
 
     void 'DistributedLock annotation is ignored when disabled'() {

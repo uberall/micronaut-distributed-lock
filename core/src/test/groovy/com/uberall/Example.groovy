@@ -2,42 +2,48 @@ package com.uberall
 
 import com.uberall.annotations.DistributedLock
 import groovy.util.logging.Slf4j
-import io.micronaut.scheduling.annotation.Scheduled
 
 import javax.inject.Singleton
 
 @Singleton
 @Slf4j
+@SuppressWarnings('GrMethodMayBeStatic')
 class Example {
 
     static int counter = 0
 
-    @SuppressWarnings('GrMethodMayBeStatic')
     @DistributedLock(ttl = "3s", cleanup = false)
-    @Scheduled(initialDelay = "3d", fixedDelay = "10h")
     void instantRunningNoCleanup() {
         log.info("instantRunningNoCleanup: start")
         counter++
         log.info("instantRunningNoCleanup: done")
     }
 
-    @SuppressWarnings('GrMethodMayBeStatic')
     @DistributedLock(ttl = "5m")
-    @Scheduled(initialDelay = "3d", fixedDelay = "10h")
     void normalRuntimeWithCleanup() {
         log.info("normalRuntimeWithCleanup: start")
         counter++
-        sleep(1000)
+        expensiveBusinessLogic(1000)
         log.info("normalRuntimeWithCleanup: done")
     }
 
-    @SuppressWarnings('GrMethodMayBeStatic')
-    @DistributedLock(ttl = "5m", appendParams = true, cleanup = false)
-    @Scheduled(initialDelay = "3d", fixedDelay = "10h")
-    void longRunningWithCleanup(def i) {
-        log.info("longRunningWithCleanup $i: start")
+    @DistributedLock(ttl = "5m", appendParameters = false, cleanup = false)
+    void noCleanupNoParams(def i) {
+        log.info("longRunningNoCleanupNoParams $i: start")
         counter++
-        sleep(5000)
-        log.info("longRunningWithCleanup $i: done")
+        expensiveBusinessLogic(5000)
+        log.info("longRunningNoCleanupNoParams $i: done")
+    }
+
+    @DistributedLock(ttl = "5s", appendParameters = true)
+    void cleanupWithParameters(def i) {
+        log.info("cleanupWithParameters $i: start")
+        counter++
+        expensiveBusinessLogic(1000)
+        log.info("cleanupWithParameters $i: done")
+    }
+
+    private void expensiveBusinessLogic(int magicBusinessValue) {
+        sleep(magicBusinessValue)
     }
 }

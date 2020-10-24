@@ -12,7 +12,7 @@ import org.testcontainers.spock.Testcontainers
 @Testcontainers
 class RedisLockSpec extends ImplementationSpec<RedisLockService> implements TestPropertyProvider {
 
-    public static final String REDIS_IMAGE = "redis"
+    public static final String REDIS_IMAGE = "redis:alpine"
 
     @Lazy
     static GenericContainer redisContainer = {

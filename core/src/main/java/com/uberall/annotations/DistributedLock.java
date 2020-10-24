@@ -33,7 +33,7 @@ public @interface DistributedLock {
      * If set to true a hash of parameters and their values is appended to the name
      * Should only be set to true if parameter values are implementing a proper toString method
      */
-    boolean appendParams() default false;
+    boolean appendParameters() default false;
 
 
     /**
