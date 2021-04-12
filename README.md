@@ -5,13 +5,13 @@ A Micronaut library to lock method executions in a distributed environment
 
 ### Prerequisites
 
-Add our bintray repository to your pom.xml or build.gradle
+Add our Github Packages repository to your pom.xml or build.gradle
 
 build.gradle
 ```
 repositories {
     maven {
-        url  "https://dl.bintray.com/uberall/micronaut" 
+        url  "https://maven.pkg.github.com/uberall/micronaut-distributed-lock" 
     }
 }
 ```
@@ -225,7 +225,7 @@ No special setup is needed to start development. Just hack ahead and create a MR
 
 ## Publishing
 
-You'll need to be in the uberall organisation in Bintray to be able to publish the latest version.
-also `BINTRAY_USER` and `BINTRAY_API_KEY` environment variables need to be set.
+You'll need to be in the uberall organisation in Github to be able to publish the latest version.
+also `GITHUB_USER` and `GITHUB_TOKEN` environment variables need to be set.
 
-Simply run `./gradlew :publish --no-daemon` to upload all artifacts to bintray
+Simply run `./gradlew :publish --no-daemon` to upload all artifacts to Github.
