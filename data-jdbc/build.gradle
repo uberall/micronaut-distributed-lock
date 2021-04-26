@@ -16,4 +16,4 @@ dependencies {
     testImplementation project(":core").sourceSets.test.output
 }
 
-bintrayUpload.dependsOn('clean', 'test')
+publish.dependsOn('clean', 'test')

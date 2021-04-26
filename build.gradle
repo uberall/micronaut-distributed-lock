@@ -5,7 +5,6 @@ plugins {
     id "groovy"
     id 'maven-publish'
     id "com.diffplug.eclipse.apt" version "3.22.0"
-    id "com.jfrog.bintray" version "1.8.5"
 }
 
 subprojects {
@@ -70,10 +69,6 @@ subprojects {
             }
         }
     }
-}
-
-task publish(overwrite: true, type: GradleBuild) {
-    tasks = ['core:bintrayUpload', 'redis:bintrayUpload', 'data-jdbc:bintrayUpload']
 }
 
 task full_test(type: GradleBuild) {
