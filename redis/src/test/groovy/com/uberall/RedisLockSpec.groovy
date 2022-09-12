@@ -1,7 +1,7 @@
 package com.uberall
 
 import groovy.util.logging.Slf4j
-import io.micronaut.test.annotation.MicronautTest
+import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import io.micronaut.test.support.TestPropertyProvider
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.wait.strategy.HostPortWaitStrategy

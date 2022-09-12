@@ -5,7 +5,7 @@ import com.uberall.models.Lock;
 import com.uberall.repositories.DistributedLockRepository;
 import io.micronaut.data.exceptions.DataAccessException;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Optional;
 

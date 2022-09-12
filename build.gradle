@@ -4,7 +4,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 plugins {
     id "groovy"
     id 'maven-publish'
-    id "com.diffplug.eclipse.apt" version "3.22.0"
+    id "com.diffplug.eclipse.apt" version "3.37.2"
 }
 
 subprojects {
@@ -17,7 +17,6 @@ subprojects {
 
     repositories {
         mavenCentral()
-        jcenter()
     }
 
     // use JUnit 5 platform

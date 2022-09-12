@@ -8,11 +8,11 @@ import io.micronaut.aop.MethodInterceptor;
 import io.micronaut.aop.MethodInvocationContext;
 import io.micronaut.context.annotation.Value;
 import io.micronaut.core.convert.ConversionService;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.lang.annotation.Annotation;
 import java.time.Duration;
 import java.time.LocalDateTime;
