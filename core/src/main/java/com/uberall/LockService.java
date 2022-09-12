@@ -2,7 +2,6 @@ package com.uberall;
 
 import com.uberall.models.Lock;
 import jakarta.inject.Singleton;
-
 import java.util.Optional;
 
 @Singleton

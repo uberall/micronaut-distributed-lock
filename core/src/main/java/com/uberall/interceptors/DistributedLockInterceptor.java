@@ -12,7 +12,6 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.lang.annotation.Annotation;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -30,7 +29,8 @@ public class DistributedLockInterceptor implements MethodInterceptor<Object, Obj
 
     final LockService lockService;
 
-    @Value("${micronaut.distributed-lock.enabled:true}") boolean enabled;
+    @Value("${micronaut.distributed-lock.enabled:true}")
+    boolean enabled;
 
     @Inject
     public DistributedLockInterceptor(LockService lockService) {
