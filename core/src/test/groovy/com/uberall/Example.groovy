@@ -2,8 +2,7 @@ package com.uberall
 
 import com.uberall.annotations.DistributedLock
 import groovy.util.logging.Slf4j
-
-import javax.inject.Singleton
+import jakarta.inject.Singleton
 
 @Singleton
 @Slf4j

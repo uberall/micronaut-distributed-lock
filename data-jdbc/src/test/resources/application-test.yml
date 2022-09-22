@@ -1,6 +1,6 @@
 datasources:
   foo:
-    url: jdbc:tc:mysql:5.7:///test
+    url: jdbc:tc:mysql:8.0:///test
     driverClassName: org.testcontainers.jdbc.ContainerDatabaseDriver
     schema-generate: NONE
     dialect: mysql

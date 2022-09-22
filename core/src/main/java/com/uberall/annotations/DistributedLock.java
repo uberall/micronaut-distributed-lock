@@ -4,7 +4,6 @@ import com.uberall.interceptors.DistributedLockInterceptor;
 import io.micronaut.aop.Around;
 import io.micronaut.context.annotation.Executable;
 import io.micronaut.context.annotation.Type;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
