@@ -5,6 +5,11 @@ plugins {
     id "groovy"
     id 'maven-publish'
     id "com.diffplug.eclipse.apt" version "3.37.2"
+    id("io.micronaut.library") version "4.2.0"
+}
+
+repositories {
+    mavenCentral()
 }
 
 subprojects {
@@ -25,8 +30,8 @@ subprojects {
     }
 
     java {
-        sourceCompatibility = JavaVersion.toVersion('1.8')
-        targetCompatibility = JavaVersion.toVersion('1.8')
+        sourceCompatibility = JavaVersion.toVersion('17')
+        targetCompatibility = JavaVersion.toVersion('17')
         withSourcesJar()
         withJavadocJar()
     }

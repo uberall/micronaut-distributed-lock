@@ -1,17 +1,18 @@
 package com.uberall;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uberall.exceptions.DistributedLockCreationException;
 import com.uberall.models.Lock;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.api.sync.RedisCommands;
 import io.lettuce.core.api.sync.RedisServerCommands;
 import io.micronaut.context.annotation.Value;
+import io.micronaut.serde.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import jakarta.inject.Inject;
+
+import java.io.IOException;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -41,7 +42,7 @@ public class RedisLockService implements LockService {
 
         try {
             result = Optional.ofNullable(objectMapper.readValue(json, Lock.class));
-        } catch (JsonProcessingException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -63,7 +64,7 @@ public class RedisLockService implements LockService {
                         throw new DistributedLockCreationException(lock.getName(), null);
                     }
                 });
-            } catch (JsonProcessingException e) {
+            } catch (IOException e) {
                 LOG.error("creating lock json failed", e);
             }
         }

@@ -1,6 +1,14 @@
+plugins {
+    id("io.micronaut.library") version "4.2.0"
+}
+
+repositories {
+    mavenCentral()
+}
+
 dependencies {
-    annotationProcessor("io.micronaut:micronaut-validation")
-    implementation("io.micronaut:micronaut-validation")
+    annotationProcessor("io.micronaut.validation:micronaut-validation-processor")
+    implementation("io.micronaut.validation:micronaut-validation")
 
     annotationProcessor "io.micronaut.data:micronaut-data-processor:$micronautDataVersion"
     implementation "io.micronaut.data:micronaut-data-jdbc:$micronautDataVersion"
@@ -10,7 +18,7 @@ dependencies {
     testImplementation 'org.flywaydb:flyway-mysql'
     testImplementation "org.testcontainers:spock:$testcontainersVersion"
     testRuntimeOnly "org.testcontainers:mysql:$testcontainersVersion"
-    testRuntimeOnly "org.postgresql:postgresql:42.5.0"
+    testRuntimeOnly 'org.postgresql:postgresql:42.7.2'
     testRuntimeOnly "mysql:mysql-connector-java:8.0.30"
     implementation project(":core")
 
