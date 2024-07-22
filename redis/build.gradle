@@ -1,7 +1,15 @@
+plugins {
+    id("io.micronaut.library") version "4.2.0"
+}
+
+repositories {
+    mavenCentral()
+}
 dependencies {
+    annotationProcessor("io.micronaut.serde:micronaut-serde-processor")
     implementation("io.micronaut.redis:micronaut-redis-lettuce")
     testImplementation "org.testcontainers:spock:$testcontainersVersion"
-
+    api("io.micronaut.serde:micronaut-serde-jackson")
     implementation project(":core")
 
     testImplementation project(":core").sourceSets.test.output

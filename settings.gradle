@@ -9,4 +9,6 @@
 
 rootProject.name = 'micronaut-distributed-lock'
 
-include 'core', 'redis', 'data-jdbc'
+include 'core'
+include 'redis'
+include 'data-jdbc'
