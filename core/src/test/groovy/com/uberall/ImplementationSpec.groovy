@@ -3,7 +3,6 @@ package com.uberall
 import com.uberall.interceptors.DistributedLockInterceptor
 import io.micronaut.scheduling.TaskScheduler
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
-import spock.lang.IgnoreRest
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -12,15 +11,18 @@ import java.time.Duration
 
 @MicronautTest
 @Unroll
-abstract class ImplementationSpec extends Specification {
+abstract class ImplementationSpec<T extends LockService> extends Specification {
+
+    @Inject Example example
+
+    @Inject T lockService
 
     @Inject DistributedLockInterceptor distributedLockInterceptor
 
     @Inject TaskScheduler taskScheduler
 
-    @Inject Example example
-
     void setup() {
+        example.counter = 0
         lockService.clear()
     }
 
@@ -34,7 +36,7 @@ abstract class ImplementationSpec extends Specification {
         sleep(1500)
 
         then: "we only executed it once"
-        example.counter.get() == 1
+        example.counter == 1
 
         when: "we clean the repository"
         lockService.clear()
@@ -43,7 +45,7 @@ abstract class ImplementationSpec extends Specification {
         example.instantRunningNoCleanup()
 
         then: "the method was executed"
-        example.counter.get() == 2
+        example.counter == 2
 
         when: "we wait for the lock to expire"
         Thread.sleep(5000)
@@ -52,10 +54,8 @@ abstract class ImplementationSpec extends Specification {
         example.instantRunningNoCleanup()
 
         then: "the method was executed"
-        example.counter.get() == 3
+        example.counter == 3
 
-        cleanup:
-        example.reset()
     }
 
     void 'DistributedLock annotation is working as expected when cleanup is enabled'() {
@@ -68,7 +68,7 @@ abstract class ImplementationSpec extends Specification {
         Thread.sleep(1000)
 
         then: "we only executed it once"
-        example.counter.get() == 1
+        example.counter == 1
 
         when: "we wait a little longer for the one running invocation to finish"
         Thread.sleep(5000)
@@ -77,10 +77,7 @@ abstract class ImplementationSpec extends Specification {
         example.normalRuntimeWithCleanup()
 
         then: "it was executed again although the lock ttl isn't reached"
-        example.counter.get() == 2
-
-        cleanup:
-        example.reset()
+        example.counter == 2
     }
 
     void 'instant parallel invocation does not lead to multiple executions'() {
@@ -93,26 +90,20 @@ abstract class ImplementationSpec extends Specification {
         sleep(2000)
 
         then:
-        example.counter.get() == 1
-
-        cleanup:
-        example.reset()
+        example.counter == 1
     }
 
     void 'instant parallel invocation does lead to multiple executions when parameters are appended'() {
         when: "we execute our test method 5 times in parallel"
         5.times { c ->
-            taskScheduler.schedule(Duration.ofMillis(5), { example.cleanupWithParameters(c) })
+            taskScheduler.schedule(Duration.ofMillis(1), { example.cleanupWithParameters(c) })
         }
 
         and: "we wait a couple seconds"
         sleep(2000)
 
         then:
-        example.counter.get() == 5
-
-        cleanup:
-        example.reset()
+        example.counter == 5
     }
 
     void 'DistributedLock annotation is ignored when disabled'() {
@@ -121,6 +112,7 @@ abstract class ImplementationSpec extends Specification {
 
         and: "a clear lock database"
         lockService.clear()
+        example.counter = 0
 
         when: "we call foo 10 times"
         10.times {
@@ -128,11 +120,6 @@ abstract class ImplementationSpec extends Specification {
         }
 
         then:
-        example.counter.get() == 10
-
-        cleanup:
-        example.reset()
+        example.counter == 10
     }
-
-    abstract LockService getLockService()
 }

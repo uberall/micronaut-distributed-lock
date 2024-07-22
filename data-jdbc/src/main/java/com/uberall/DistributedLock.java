@@ -3,8 +3,7 @@ package com.uberall;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotNull;
-
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Entity

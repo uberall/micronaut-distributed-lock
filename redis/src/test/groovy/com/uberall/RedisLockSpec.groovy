@@ -1,11 +1,8 @@
 package com.uberall
 
-import com.uberall.models.Lock
 import groovy.util.logging.Slf4j
-import io.micronaut.serde.annotation.SerdeImport
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import io.micronaut.test.support.TestPropertyProvider
-import jakarta.inject.Inject
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.wait.strategy.HostPortWaitStrategy
 import org.testcontainers.spock.Testcontainers
@@ -13,9 +10,7 @@ import org.testcontainers.spock.Testcontainers
 @MicronautTest
 @Slf4j
 @Testcontainers
-class RedisLockSpec extends ImplementationSpec implements TestPropertyProvider {
-
-    @Inject RedisLockService lockService
+class RedisLockSpec extends ImplementationSpec<RedisLockService> implements TestPropertyProvider {
 
     public static final String REDIS_IMAGE = "redis:alpine"
 

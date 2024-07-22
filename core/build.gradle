@@ -1,14 +1,1 @@
-plugins {
-    id("io.micronaut.library") version "4.2.0"
-}
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    annotationProcessor("io.micronaut.serde:micronaut-serde-processor")
-    api("io.micronaut.serde:micronaut-serde-jackson")
-}
-
 publish.dependsOn('clean', 'test')
